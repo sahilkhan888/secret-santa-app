@@ -5,6 +5,7 @@ import { useFormState, useFormStatus } from 'react-dom';
 import { Button } from '@/components/ui/Button';
 import { FormField } from '@/components/ui/FormField';
 import { Input, Textarea } from '@/components/ui/Input';
+import { Label } from '@/components/ui/Label';
 import { cn } from '@/lib/utils';
 import { joinEventAction, type JoinState } from './actions';
 
@@ -74,15 +75,13 @@ export function JoinForm({ eventSlug, eventName }: JoinFormProps) {
     return null;
   })();
 
-  const isComplete =
-    name.trim().length > 0 &&
-    team.trim().length > 0 &&
-    EMAIL_RE.test(email.trim()) &&
-    budget.trim() !== '' &&
-    !liveBudgetError &&
-    likes.trim().length > 0 &&
-    dislikes.trim().length > 0 &&
-    (!needsShirtSize || shirtSize !== '');
+  const missing: string[] = [];
+  if (name.trim().length === 0) missing.push('name');
+  if (team.trim().length === 0) missing.push('team');
+  if (!EMAIL_RE.test(email.trim())) missing.push('email');
+  if (budget.trim() === '' || liveBudgetError) missing.push('budget');
+  if (needsShirtSize && shirtSize === '') missing.push('shirt size');
+  const isComplete = missing.length === 0;
 
   if (state.status === 'success') {
     return (
@@ -114,7 +113,7 @@ export function JoinForm({ eventSlug, eventName }: JoinFormProps) {
   }
 
   return (
-    <form action={formAction} className="space-y-5">
+    <form action={formAction} className="space-y-7">
       {formError && (
         <div className="rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800">
           {formError}
@@ -177,44 +176,46 @@ export function JoinForm({ eventSlug, eventName }: JoinFormProps) {
         />
       </FormField>
 
-      <FormField
-        label="Three things you genuinely enjoy"
-        htmlFor="wishlist_likes"
-        hint="Tap a chip to add it, or write your own."
-        error={fieldErrors.wishlist_likes}
-      >
-        <div className="space-y-2">
-          <div className="flex flex-wrap gap-1.5">
-            {LIKE_CHIPS.map((chip) => {
-              const selected = selectedChips.has(chip);
-              return (
-                <button
-                  key={chip}
-                  type="button"
-                  onClick={() => toggleChip(chip)}
-                  aria-pressed={selected}
-                  className={cn(
-                    'rounded-full border px-3 py-1 text-xs transition',
-                    selected
-                      ? 'border-forest bg-forest text-cream'
-                      : 'border-forest/20 bg-white text-forest hover:border-forest/40',
-                  )}
-                >
-                  {chip}
-                </button>
-              );
-            })}
-          </div>
-          <Textarea
-            id="wishlist_likes"
-            name="wishlist_likes"
-            rows={3}
-            value={likes}
-            onChange={(e) => setLikes(e.target.value)}
-            placeholder="e.g. filter coffee, paperbacks, long walks"
-          />
+      <div className="space-y-3">
+        <div className="space-y-1">
+          <Label htmlFor="wishlist_likes">Three things you genuinely enjoy</Label>
+          <p className="text-xs text-forest/60">
+            Select any that apply — tap multiple, or write your own.
+          </p>
         </div>
-      </FormField>
+        <div className="flex flex-wrap gap-2">
+          {LIKE_CHIPS.map((chip) => {
+            const selected = selectedChips.has(chip);
+            return (
+              <button
+                key={chip}
+                type="button"
+                onClick={() => toggleChip(chip)}
+                aria-pressed={selected}
+                className={cn(
+                  'rounded-full border px-3.5 py-1.5 text-xs transition',
+                  selected
+                    ? 'border-forest bg-forest text-cream'
+                    : 'border-forest/20 bg-white text-forest hover:border-forest/40',
+                )}
+              >
+                {chip}
+              </button>
+            );
+          })}
+        </div>
+        <Textarea
+          id="wishlist_likes"
+          name="wishlist_likes"
+          rows={3}
+          value={likes}
+          onChange={(e) => setLikes(e.target.value)}
+          placeholder="e.g. filter coffee, paperbacks, long walks"
+        />
+        {fieldErrors.wishlist_likes && (
+          <p className="text-xs text-red-700">{fieldErrors.wishlist_likes}</p>
+        )}
+      </div>
 
       <FormField
         label="One thing you&rsquo;d never want as a gift"
@@ -257,7 +258,14 @@ export function JoinForm({ eventSlug, eventName }: JoinFormProps) {
         </FormField>
       )}
 
-      <SubmitButton disabled={!isComplete} />
+      <div className="space-y-2">
+        <SubmitButton disabled={!isComplete} />
+        {!isComplete && (
+          <p className="text-center text-xs text-forest/50">
+            Still needed: {missing.join(', ')}.
+          </p>
+        )}
+      </div>
     </form>
   );
 }
