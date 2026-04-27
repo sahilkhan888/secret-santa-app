@@ -5,9 +5,112 @@
 @layer base {
   html {
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
   body {
     @apply bg-cream text-forest font-sans;
+    background-image:
+      radial-gradient(ellipse at top, rgba(212, 165, 116, 0.07), transparent 60%),
+      radial-gradient(ellipse at bottom, rgba(15, 61, 46, 0.04), transparent 50%),
+      url("data:image/svg+xml;utf8,<svg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0.06 0 0 0 0 0.24 0 0 0 0 0.18 0 0 0 0.5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)' opacity='0.06'/></svg>");
+  }
+
+  /* Warm selection */
+  ::selection {
+    @apply bg-gold/30 text-forest;
+  }
+}
+
+@layer utilities {
+  /* Tiny editorial kicker — small caps with extra letter-spacing */
+  .kicker {
+    @apply text-[11px] font-medium uppercase tracking-[0.18em] text-forest/60;
+  }
+
+  /* Hairline gold rule */
+  .rule-gold {
+    @apply h-px w-full bg-gold/40;
+  }
+
+  /* Festive garland — repeating gold dots with a star at center */
+  .garland {
+    height: 1px;
+    background-image: radial-gradient(circle, rgba(212, 165, 116, 0.55) 0.8px, transparent 1.2px);
+    background-size: 8px 1px;
+    background-repeat: repeat-x;
+  }
+
+  /* Slow gold twinkle for stars and berries */
+  .twinkle {
+    animation: twinkle 3.4s ease-in-out infinite;
+    transform-origin: center;
+  }
+  .twinkle-delay-1 { animation-delay: 0.6s; }
+  .twinkle-delay-2 { animation-delay: 1.2s; }
+
+  @keyframes twinkle {
+    0%, 100% { opacity: 1;   transform: scale(1); }
+    50%      { opacity: 0.55; transform: scale(0.92); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .twinkle { animation: none; }
+  }
+
+  /* Snowfall — drifts down with subtle horizontal sway and rotation */
+  .snowflake {
+    position: absolute;
+    top: -6vh;
+    color: rgba(15, 61, 46, 0.32);
+    animation: snowfall linear infinite, snowsway ease-in-out infinite;
+    will-change: transform;
+    filter: drop-shadow(0 0 1px rgba(255, 255, 255, 0.6));
+  }
+
+  @keyframes snowfall {
+    0%   { transform: translateY(0)        rotate(0deg); }
+    100% { transform: translateY(112vh)    rotate(360deg); }
+  }
+
+  @keyframes snowsway {
+    0%, 100% { margin-left: 0; }
+    50%      { margin-left: 16px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .snowflake { display: none; }
+  }
+
+  /* Subtle stagger entrance — apply to a parent and rely on children selectors */
+  .stagger-in > * {
+    opacity: 0;
+    transform: translateY(6px);
+    animation: stagger-rise 480ms cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  }
+  .stagger-in > *:nth-child(1)  { animation-delay:  40ms; }
+  .stagger-in > *:nth-child(2)  { animation-delay:  90ms; }
+  .stagger-in > *:nth-child(3)  { animation-delay: 140ms; }
+  .stagger-in > *:nth-child(4)  { animation-delay: 190ms; }
+  .stagger-in > *:nth-child(5)  { animation-delay: 240ms; }
+  .stagger-in > *:nth-child(6)  { animation-delay: 290ms; }
+  .stagger-in > *:nth-child(7)  { animation-delay: 340ms; }
+  .stagger-in > *:nth-child(8)  { animation-delay: 380ms; }
+  .stagger-in > *:nth-child(9)  { animation-delay: 420ms; }
+  .stagger-in > *:nth-child(10) { animation-delay: 460ms; }
+
+  @keyframes stagger-rise {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .stagger-in > * {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
   }
 }

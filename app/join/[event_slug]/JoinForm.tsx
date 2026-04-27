@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import { useFormState, useFormStatus } from 'react-dom';
+import { PineBough } from '@/components/brand/PineBough';
 import { Button } from '@/components/ui/Button';
 import { FormField } from '@/components/ui/FormField';
 import { Input, Textarea } from '@/components/ui/Input';
@@ -85,15 +86,29 @@ export function JoinForm({ eventSlug, eventName }: JoinFormProps) {
 
   if (state.status === 'success') {
     return (
-      <div className="space-y-4 rounded-2xl border border-gold/40 bg-white/80 p-6 text-center">
-        <h2 className="font-display text-2xl text-forest">You&rsquo;re in.</h2>
-        <p className="text-sm text-forest/80">
-          We sent a sign-in link to <span className="font-medium">{state.email}</span>. Check your
-          inbox to view your dashboard for {eventName}.
-        </p>
-        <p className="text-xs text-forest/50">
-          Didn&rsquo;t receive it? Resubmit the form below with the same email to resend.
-        </p>
+      <div className="relative overflow-hidden rounded-2xl border border-gold/40 bg-white/80 p-8 text-center shadow-[0_1px_0_rgba(255,255,255,0.7)_inset,0_24px_48px_-32px_rgba(15,61,46,0.25)]">
+        <PineBough corner="tl" className="absolute -top-1 -left-1" />
+        <PineBough corner="br" className="absolute -bottom-1 -right-1" />
+        <div className="relative">
+          <div className="mx-auto inline-flex">
+            <svg width="22" height="22" viewBox="0 0 14 14" aria-hidden className="text-gold twinkle">
+              <path
+                d="M7 1 L 8.2 5.4 L 13 5.8 L 9.3 8.6 L 10.6 13 L 7 10.5 L 3.4 13 L 4.7 8.6 L 1 5.8 L 5.8 5.4 Z"
+                fill="currentColor"
+              />
+            </svg>
+          </div>
+          <h2 className="mt-5 font-display text-3xl tracking-tight text-forest">
+            You&rsquo;re <span className="italic">in</span>.
+          </h2>
+          <p className="mt-3 text-sm leading-relaxed text-forest/75">
+            We sent a sign-in link to <span className="font-medium text-forest">{state.email}</span>.
+            Check your inbox to view your dashboard for {eventName}.
+          </p>
+          <p className="mt-5 text-xs text-forest/50">
+            Didn&rsquo;t receive it? Resubmit with the same email to resend.
+          </p>
+        </div>
       </div>
     );
   }
@@ -113,7 +128,7 @@ export function JoinForm({ eventSlug, eventName }: JoinFormProps) {
   }
 
   return (
-    <form action={formAction} className="space-y-7">
+    <form action={formAction} className="stagger-in space-y-7">
       {formError && (
         <div className="rounded-xl border border-red-300 bg-red-50 px-4 py-3 text-sm text-red-800">
           {formError}
